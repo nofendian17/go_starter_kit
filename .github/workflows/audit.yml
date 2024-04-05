@@ -19,7 +19,7 @@ jobs:
           go-version: 1.22
 
       - name: Config file
-        run: cp resource/example.config.yml resource/config.yml
+        run: cp resource/example.config.yaml resource/config.yaml
 
       - name: Verify dependencies
         run: go mod verify
