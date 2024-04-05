@@ -9,11 +9,11 @@ import (
 	"time"
 )
 
-// Heath returns the health status of the system.
+// Health returns the health status of the system.
 //
 // Context ctx is used to carry deadlines, cancellation signals, and other request-scoped values.
 // Returns a pointer to response.HealthResponse and an error.
-func (u *useCase) Heath(ctx context.Context) (*response.HealthResponse, error) {
+func (u *useCase) Health(ctx context.Context) (*response.HealthResponse, error) {
 
 	c, err := cpu.PercentWithContext(ctx, 0, false)
 	if err != nil {

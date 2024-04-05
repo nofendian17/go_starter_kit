@@ -3,7 +3,6 @@ package healthcheck
 import (
 	"context"
 	"github.com/nofendian17/gostarterkit/internal/delivery/rest/model/response"
-	"time"
 )
 
 const (
@@ -49,12 +48,4 @@ func (u *useCase) Readiness(ctx context.Context) (*response.ReadinessResponse, e
 	ready.Checks = append(ready.Checks, checks...)
 
 	return &ready, nil
-}
-
-// Health returns the health status of the system.
-func (u *useCase) Health(ctx context.Context) (*response.HealthResponse, error) {
-	return &response.HealthResponse{
-		Version: u.config.Application.Version,
-		Uptime:  time.Since(u.startAt).String(),
-	}, nil
 }

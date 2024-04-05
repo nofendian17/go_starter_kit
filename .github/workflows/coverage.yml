@@ -1,4 +1,4 @@
-name: Coverage  # The name of the workflow that will appear on Github
+name: Coverage  # The name of the workflow that will appear on GitHub
 
 on:
   push:
@@ -14,8 +14,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        go: [1.22]
+        os: [ ubuntu-latest ]
+        go: [ 1.22 ]
     steps:
       - uses: actions/checkout@v3
 

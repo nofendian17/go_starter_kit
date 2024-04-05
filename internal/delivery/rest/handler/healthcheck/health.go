@@ -9,7 +9,7 @@ import (
 func (h *handler) Health() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
-		res, err := h.useCase.Heath(ctx)
+		res, err := h.useCase.Health(ctx)
 
 		var status int
 		var data interface{}

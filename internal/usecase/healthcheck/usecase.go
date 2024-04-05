@@ -10,7 +10,7 @@ import (
 )
 
 type UseCase interface {
-	Heath(ctx context.Context) (*response.HealthResponse, error)
+	Health(ctx context.Context) (*response.HealthResponse, error)
 	Readiness(ctx context.Context) (*response.ReadinessResponse, error)
 }
 

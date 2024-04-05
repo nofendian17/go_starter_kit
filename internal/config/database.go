@@ -8,7 +8,6 @@ type Database struct {
 	Password      string `mapstructure:"password"`
 	Database      string `mapstructure:"database"`
 	Charset       string `mapstructure:"charset"`
-	Collation     string `mapstructure:"collation"`
 	Timezone      string `mapstructure:"timezone"`
 	MaxIdleConns  int    `mapstructure:"maxIdleConns"`
 	MaxOpenConns  int    `mapstructure:"maxOpenConns"`

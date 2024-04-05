@@ -15,12 +15,12 @@ type UseCase struct {
 	mock.Mock
 }
 
-// Heath provides a mock function with given fields: ctx
-func (_m *UseCase) Heath(ctx context.Context) (*response.HealthResponse, error) {
+// Health provides a mock function with given fields: ctx
+func (_m *UseCase) Health(ctx context.Context) (*response.HealthResponse, error) {
 	ret := _m.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for Heath")
+		panic("no return value specified for Health")
 	}
 
 	var r0 *response.HealthResponse
