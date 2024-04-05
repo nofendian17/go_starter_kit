@@ -27,6 +27,9 @@ jobs:
       - name: Build
         run: go install
 
+      - name: Copy configuration
+        run: cp resource/example.config.yaml resource/config.yaml
+
       - name: Test
         run: |
           go test -v -cover ./... -coverprofile coverage.out -coverpkg ./...
