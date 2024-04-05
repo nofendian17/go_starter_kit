@@ -1,4 +1,5 @@
 # Go Skeleton Project
+![Coverage](https://img.shields.io/badge/Coverage-26.7%25-red)
 
 This is a skeleton project for kickstarting Go applications. It provides a basic directory structure and configuration setup to help you get started with your Go projects quickly.
 
