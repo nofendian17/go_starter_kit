@@ -9,53 +9,54 @@ import (
 	"github.com/nofendian17/gostarterkit/internal/delivery/rest/handler"
 	"github.com/nofendian17/gostarterkit/internal/delivery/rest/middleware"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 )
 
+// ServerInterface defines the methods for an HTTP server.
 type ServerInterface interface {
-	Start(ctx context.Context, port int) error
+	Start(port int) error
+	Stop(ctx context.Context) error
 }
 
 // Server represents the HTTP server.
 type Server struct {
-	router  *http.ServeMux
-	handler *handler.Handler
+	router     *http.ServeMux
+	handler    *handler.Handler
+	httpServer *http.Server
 }
 
 // Start starts the HTTP server.
-func (s *Server) Start(ctx context.Context, port int) error {
+func (s *Server) Start(port int) error {
 	stack := middleware.Stack(
 		middleware.Cors,
 		middleware.RequestID,
 	)
 
-	httpServer := &http.Server{
+	s.httpServer = &http.Server{
 		Addr:    fmt.Sprintf(":%d", port),
 		Handler: stack(s.router),
 	}
 
-	// Start the HTTP server in a separate goroutine
-	go func() {
-		if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			slog.Errorf("Failed to start HTTP server: %v", err)
-		}
-	}()
+	if err := s.httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		slog.Errorf("Failed to start HTTP server: %v", err)
+		return err
+	}
 
-	// Wait for an OS interrupt signal
-	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, os.Interrupt)
-	signal.Notify(ch, syscall.SIGTERM)
-	<-ch
+	return nil
+}
+
+// Stop gracefully shuts down the HTTP server.
+func (s *Server) Stop(ctx context.Context) error {
+	if s.httpServer == nil {
+		return errors.New("HTTP server is not running")
+	}
 
 	// Create a context with a timeout for graceful shutdown
 	ctxShutDown, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
 
 	// Attempt to gracefully shut down the HTTP server
-	if err := httpServer.Shutdown(ctxShutDown); err != nil {
+	if err := s.httpServer.Shutdown(ctxShutDown); err != nil {
 		slog.Errorf("Failed to gracefully shutdown HTTP server: %v", err)
 		return err
 	}
