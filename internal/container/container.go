@@ -8,10 +8,8 @@ import (
 )
 
 type Container struct {
-	Config   *config.Config
-	UseCase  *usecase.UseCase
-	Database *database.DB
-	Cache    cache.Client
+	Config  *config.Config
+	UseCase *usecase.UseCase
 }
 
 // New initializes and returns a new Container with the given configuration.
@@ -19,9 +17,7 @@ func New(cfg *config.Config) *Container {
 	db := database.New(cfg)
 	c := cache.New(cfg)
 	return &Container{
-		Config:   cfg,
-		UseCase:  usecase.New(cfg, db, c),
-		Database: db,
-		Cache:    c,
+		Config:  cfg,
+		UseCase: usecase.New(cfg, db, c),
 	}
 }

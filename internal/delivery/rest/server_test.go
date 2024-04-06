@@ -25,7 +25,6 @@ func TestServer_StartStop(t *testing.T) {
 	cntr := &container.Container{
 		Config:  cfg,
 		UseCase: u,
-		Cache:   c,
 	}
 
 	// Create a new HTTP server instance

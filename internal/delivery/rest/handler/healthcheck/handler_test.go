@@ -18,7 +18,6 @@ func TestNewHandler(t *testing.T) {
 	cntr := &container.Container{
 		Config:  cfg,
 		UseCase: u,
-		Cache:   c,
 	}
 
 	type args struct {
