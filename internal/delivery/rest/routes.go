@@ -1,6 +1,6 @@
 package rest
 
-func (s *Server) routes() {
+func (s *server) routes() {
 	// health routes
 	s.router.HandleFunc("GET /health", s.handler.Health.Health())
 	s.router.HandleFunc("GET /readiness", s.handler.Health.Readiness())

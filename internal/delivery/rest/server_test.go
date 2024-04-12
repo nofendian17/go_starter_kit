@@ -47,7 +47,7 @@ func TestServer_StartStop(t *testing.T) {
 	rec := httptest.NewRecorder()
 
 	// Perform a dummy request to the server
-	srv.(*Server).router.ServeHTTP(rec, req)
+	srv.(*server).router.ServeHTTP(rec, req)
 	assert.Equal(t, http.StatusOK, rec.Code, "expected 200 response")
 
 	// Stop the server

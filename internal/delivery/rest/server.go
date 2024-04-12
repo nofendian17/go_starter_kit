@@ -18,15 +18,15 @@ type ServerInterface interface {
 	Stop(ctx context.Context) error
 }
 
-// Server represents the HTTP server.
-type Server struct {
+// server represents the HTTP server.
+type server struct {
 	router     *http.ServeMux
 	handler    *handler.Handler
 	httpServer *http.Server
 }
 
 // Start starts the HTTP server.
-func (s *Server) Start(port int) error {
+func (s *server) Start(port int) error {
 	stack := middleware.Stack(
 		middleware.Cors,
 		middleware.RequestID,
@@ -46,11 +46,7 @@ func (s *Server) Start(port int) error {
 }
 
 // Stop gracefully shuts down the HTTP server.
-func (s *Server) Stop(ctx context.Context) error {
-	if s.httpServer == nil {
-		return errors.New("HTTP server is not running")
-	}
-
+func (s *server) Stop(ctx context.Context) error {
 	// Create a context with a timeout for graceful shutdown
 	ctxShutDown, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
@@ -67,7 +63,7 @@ func (s *Server) Stop(ctx context.Context) error {
 
 // New creates a new instance of the HTTP server.
 func New(c *container.Container) ServerInterface {
-	srv := &Server{
+	srv := &server{
 		router:  http.NewServeMux(),
 		handler: handler.New(c),
 	}

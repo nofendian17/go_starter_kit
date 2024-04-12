@@ -31,18 +31,20 @@ func TestServer_routes(t *testing.T) {
 	// Create a new instance of handler.Handler
 	h := &handler.Handler{
 		Health: mockHandler,
-	} // You may need to replace this with a mock or real implementation
+	}
+
+	// You may need to replace this with a mock or real implementation
 	// Create a new instance of Server with the mock handler
-	server := &Server{
+	s := &server{
 		router:  http.NewServeMux(),
 		handler: h,
 	}
 
 	// Call the routes method to register routes
-	server.routes()
+	s.routes()
 
 	// Create a test server
-	testServer := httptest.NewServer(server.router)
+	testServer := httptest.NewServer(s.router)
 	defer testServer.Close()
 
 	// Make GET requests to the registered routes and check if the status codes are OK

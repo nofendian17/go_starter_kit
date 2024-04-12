@@ -29,7 +29,7 @@ func New(cfg *config.Config) *DB {
 	dialect, err := getDialect(cfg)
 	if err != nil {
 		slog.Fatalf("Failed to create database dialect: %v", err)
-		return nil
+		panic("unknown database dialect")
 	}
 
 	slog.Infof("Connecting to database %s with driver %s", cfg.Database.Database, cfg.Database.Driver)
@@ -39,12 +39,13 @@ func New(cfg *config.Config) *DB {
 	})
 	if err != nil {
 		slog.Fatalf("Failed to connect to database: %v", err)
-		return nil
+		panic("failed to connect to database")
 	}
 
 	sqlDB, err := gormDB.DB()
 	if err != nil {
 		slog.Fatalf("Failed to get SQL DB: %v", err)
+		panic("failed to connect to database")
 		return nil
 	}
 
@@ -53,7 +54,7 @@ func New(cfg *config.Config) *DB {
 
 	if err := sqlDB.Ping(); err != nil {
 		slog.Fatalf("Failed to ping database: %v", err)
-		return nil
+		panic("failed to ping database")
 	}
 
 	slog.Infof("Successfully connected to database %s with driver %s", cfg.Database.Database, cfg.Database.Driver)
