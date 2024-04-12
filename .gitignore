@@ -1,1 +1,4 @@
 /resource/config.yaml
+/coverage.cov
+/coverage.html
+/coverage.out
