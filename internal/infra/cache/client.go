@@ -19,7 +19,7 @@ type client struct {
 	rdb *redis.Client
 }
 
-func New(cfg *config.Config) Client {
+func New(cfg *config.Config) (Client, error) {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%d", cfg.Cache.Host, cfg.Cache.Port),
 		Username: cfg.Cache.Username,
@@ -27,7 +27,12 @@ func New(cfg *config.Config) Client {
 		DB:       cfg.Cache.Database,
 	})
 
-	return &client{rdb: rdb}
+	err := rdb.Ping(context.Background()).Err()
+	if err != nil {
+		return nil, err
+	}
+
+	return &client{rdb: rdb}, nil
 }
 
 func (c *client) Ping(ctx context.Context) error {

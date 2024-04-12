@@ -13,7 +13,7 @@ import (
 func TestNew(t *testing.T) {
 
 	cfg := config.New()
-	cacheClient := New(cfg)
+	cacheClient, _ := New(cfg)
 	type args struct {
 		cfg *config.Config
 	}

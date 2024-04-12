@@ -13,9 +13,7 @@ type Container struct {
 }
 
 // New initializes and returns a new Container with the given configuration.
-func New(cfg *config.Config) *Container {
-	db := database.New(cfg)
-	c := cache.New(cfg)
+func New(cfg *config.Config, db *database.DB, c cache.Client) *Container {
 	return &Container{
 		Config:  cfg,
 		UseCase: usecase.New(cfg, db, c),

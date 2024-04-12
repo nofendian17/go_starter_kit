@@ -20,7 +20,7 @@ type DB struct {
 
 var gormOpen = gorm.Open
 
-func New(cfg *config.Config) *DB {
+func New(cfg *config.Config) (*DB, error) {
 	debugMode := logger.Silent
 	if cfg.Database.Debug {
 		debugMode = logger.Info
@@ -29,7 +29,7 @@ func New(cfg *config.Config) *DB {
 	dialect, err := getDialect(cfg)
 	if err != nil {
 		slog.Fatalf("Failed to create database dialect: %v", err)
-		panic("unknown database dialect")
+		return nil, err
 	}
 
 	slog.Infof("Connecting to database %s with driver %s", cfg.Database.Database, cfg.Database.Driver)
@@ -39,14 +39,14 @@ func New(cfg *config.Config) *DB {
 	})
 	if err != nil {
 		slog.Fatalf("Failed to connect to database: %v", err)
-		panic("failed to connect to database")
+		return nil, err
 	}
 
 	sqlDB, err := gormDB.DB()
 	if err != nil {
 		slog.Fatalf("Failed to get SQL DB: %v", err)
-		panic("failed to connect to database")
-		return nil
+
+		return nil, err
 	}
 
 	sqlDB.SetMaxIdleConns(cfg.Database.MaxIdleConns)
@@ -54,7 +54,7 @@ func New(cfg *config.Config) *DB {
 
 	if err := sqlDB.Ping(); err != nil {
 		slog.Fatalf("Failed to ping database: %v", err)
-		panic("failed to ping database")
+		return nil, err
 	}
 
 	slog.Infof("Successfully connected to database %s with driver %s", cfg.Database.Database, cfg.Database.Driver)
@@ -62,7 +62,7 @@ func New(cfg *config.Config) *DB {
 	return &DB{
 		GormDB: gormDB,
 		SqlDB:  sqlDB,
-	}
+	}, nil
 }
 
 func getDialect(cfg *config.Config) (gorm.Dialector, error) {

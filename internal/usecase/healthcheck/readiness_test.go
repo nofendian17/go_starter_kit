@@ -25,6 +25,7 @@ func Test_useCase_Readiness(t *testing.T) {
 		name     string
 		args     args
 		cacheErr error
+		dbErr    error
 		want     *response.ReadinessResponse
 		wantErr  assert.ErrorAssertionFunc
 	}{
@@ -71,10 +72,34 @@ func Test_useCase_Readiness(t *testing.T) {
 			},
 			wantErr: assert.NoError,
 		},
+		{
+			name: "failed - ping to database got error",
+			args: args{
+				ctx: context.Background(),
+			},
+			dbErr:    errors.New("error"),
+			cacheErr: nil,
+			want: &response.ReadinessResponse{
+				Status: statusDown,
+				Checks: []response.Check{
+					{
+						Name:   "mysql",
+						Status: statusDown,
+						Error:  errors.New("error").Error(),
+					},
+					{
+						Name:   "Redis",
+						Status: statusUP,
+					},
+				},
+			},
+			wantErr: assert.NoError,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_mockDB, _, _ := mockDB.New("mysql")
+			_mockDB, sqlMock, _ := mockDB.New("mysql")
+			sqlMock.ExpectPing().WillReturnError(tt.dbErr)
 			_mockCacheClient := &mockCacheClient.Client{}
 			_mockCacheClient.On("Ping", mock.Anything).Return(tt.cacheErr)
 

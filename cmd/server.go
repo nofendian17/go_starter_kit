@@ -3,6 +3,8 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"github.com/nofendian17/gostarterkit/internal/infra/cache"
+	"github.com/nofendian17/gostarterkit/internal/infra/database"
 	"os"
 	"os/signal"
 	"syscall"
@@ -17,8 +19,19 @@ import (
 // Run starts the application.
 func Run() error {
 	cfg := config.New()
-	c := container.New(cfg)
-	restServer := rest.New(c)
+
+	db, err := database.New(cfg)
+	if err != nil {
+		return err
+	}
+
+	c, err := cache.New(cfg)
+	if err != nil {
+		return err
+	}
+
+	cntr := container.New(cfg, db, c)
+	restServer := rest.New(cntr)
 
 	// Channel to catch errors
 	errCh := make(chan error)
@@ -38,7 +51,7 @@ func Run() error {
 	}()
 
 	// Wait for an error to occur
-	err := <-errCh
+	err = <-errCh
 	if err != nil {
 		slog.Errorf("Got error signal: %v", err)
 	}

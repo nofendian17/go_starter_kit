@@ -19,7 +19,7 @@ type DB struct {
 }
 
 func New(driver string) (*DB, sqlmock.Sqlmock, error) {
-	sqlDB, sqlMock, err := sqlmock.New()
+	sqlDB, sqlMock, err := sqlmock.New(sqlmock.MonitorPingsOption(true))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -50,6 +50,7 @@ func New(driver string) (*DB, sqlmock.Sqlmock, error) {
 		return nil, nil, errors.New("unsupported database driver")
 	}
 
+	sqlMock.ExpectPing()
 	db, err := gorm.Open(dialector, &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	})

@@ -29,7 +29,8 @@ func TestNew(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			gormOpen = func(dialector gorm.Dialector, opts ...gorm.Option) (db *gorm.DB, err error) {
-				DB, _, err := mocks.New(tc.driver)
+				DB, sqlMock, err := mocks.New(tc.driver)
+				sqlMock.ExpectPing().WillReturnError(nil)
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -37,7 +38,10 @@ func TestNew(t *testing.T) {
 			}
 
 			cfg.Database.Driver = tc.driver
-			db := New(cfg)
+			db, err := New(cfg)
+			if err != nil {
+				assert.FailNow(t, err.Error())
+			}
 			defer db.SqlDB.Close()
 
 			assert.IsType(t, &DB{}, db)
