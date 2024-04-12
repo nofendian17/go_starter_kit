@@ -29,6 +29,6 @@ func (u *useCase) Health(ctx context.Context) (*response.HealthResponse, error) 
 		Version: u.config.Application.Version,
 		Uptime:  time.Since(u.startAt).String(),
 		CPU:     fmt.Sprintf("%.2f%%", c[0]),
-		Memory:  fmt.Sprintf("%f%%\n", m.UsedPercent),
+		Memory:  fmt.Sprintf("%f%%", m.UsedPercent),
 	}, nil
 }
