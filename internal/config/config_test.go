@@ -45,7 +45,7 @@ func TestNew(t *testing.T) {
 				Logger: Logger{
 					File: FileLogger{
 						IsActive: true,
-						LogFile:  "log/app.log",
+						LogFile:  "/tmp/app.log",
 						Format:   "json",
 					},
 					Console: ConsoleLogger{

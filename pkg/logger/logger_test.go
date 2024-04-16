@@ -23,7 +23,7 @@ func TestNew(t *testing.T) {
 				cfg: Config{
 					File: File{
 						IsActive: true,
-						LogFile:  "log/app.log",
+						LogFile:  "/tmp/app.log",
 						Format:   "json",
 					},
 					Console: Console{
@@ -52,7 +52,7 @@ func TestNew(t *testing.T) {
 				cfg: Config{
 					File: File{
 						IsActive: true,
-						LogFile:  "log/app.log",
+						LogFile:  "/tmp/app.log",
 						Format:   "text",
 					},
 					Console: Console{

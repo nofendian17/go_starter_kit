@@ -16,7 +16,7 @@ func TestNew(t *testing.T) {
 	l := logger.New(logger.Config{
 		File: logger.File{
 			IsActive: false,
-			LogFile:  "log/app.log",
+			LogFile:  "/tmp/app.log",
 			Format:   "json",
 		},
 		Console: logger.Console{
