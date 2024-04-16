@@ -24,3 +24,6 @@ cache:
   username: ""
   password: ""
   database: 0
+logger:
+  output: json # text or json
+  level: debug # info or warn or debug or error

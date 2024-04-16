@@ -6,6 +6,7 @@ import (
 	"github.com/nofendian17/gostarterkit/internal/delivery/rest/handler/healthcheck"
 	mockCacheClient "github.com/nofendian17/gostarterkit/internal/mocks/infra/cache"
 	"github.com/nofendian17/gostarterkit/internal/usecase"
+	"github.com/nofendian17/gostarterkit/pkg/logger"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -15,10 +16,12 @@ func TestNew(t *testing.T) {
 
 	c := &mockCacheClient.Client{}
 	u := usecase.New(cfg, nil, c)
+	l := logger.New(cfg)
 
 	cntr := &container.Container{
 		Config:  cfg,
 		UseCase: u,
+		Logger:  l,
 	}
 
 	type args struct {

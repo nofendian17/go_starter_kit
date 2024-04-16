@@ -10,6 +10,7 @@ type Config struct {
 	Application Application `mapstructure:"application"`
 	Database    Database    `mapstructure:"database"`
 	Cache       Cache       `mapstructure:"cache"`
+	Logger      Logger      `mapstructure:"logger"`
 }
 
 // New ...

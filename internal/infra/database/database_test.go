@@ -1,6 +1,7 @@
 package database
 
 import (
+	"github.com/nofendian17/gostarterkit/pkg/logger"
 	"gorm.io/gorm"
 	"testing"
 
@@ -11,6 +12,7 @@ import (
 
 func TestNew(t *testing.T) {
 	cfg := config.New()
+	l := logger.New(cfg)
 	oldGormOpen := gormOpen
 	defer func() {
 		gormOpen = oldGormOpen
@@ -38,7 +40,7 @@ func TestNew(t *testing.T) {
 			}
 
 			cfg.Database.Driver = tc.driver
-			db, err := New(cfg)
+			db, err := New(cfg, l)
 			if err != nil {
 				assert.FailNow(t, err.Error())
 			}

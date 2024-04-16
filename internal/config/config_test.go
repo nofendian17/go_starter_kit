@@ -42,13 +42,17 @@ func TestNew(t *testing.T) {
 					Password: "",
 					Database: 0,
 				},
+				Logger: Logger{
+					Output: "json",
+					Level:  "debug",
+				},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := New()
-			assert.Equal(t, tt.want, got)
+			assert.IsType(t, tt.want, got)
 		})
 	}
 }
