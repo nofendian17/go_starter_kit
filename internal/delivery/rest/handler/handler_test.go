@@ -16,16 +16,7 @@ func TestNew(t *testing.T) {
 
 	c := &mockCacheClient.Client{}
 	u := usecase.New(cfg, nil, c)
-	l := logger.New(logger.Config{
-		File: logger.File{
-			IsActive: false,
-			LogFile:  "/tmp/app.log",
-			Format:   "json",
-		},
-		Console: logger.Console{
-			Format: "text",
-		},
-	})
+	l := logger.New(cfg)
 
 	cntr := &container.Container{
 		Config:  cfg,

@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"github.com/nofendian17/gostarterkit/internal/config"
@@ -21,6 +22,7 @@ type DB struct {
 var gormOpen = gorm.Open
 
 func New(cfg *config.Config, l l.Logger) (*DB, error) {
+	ctx := context.Background()
 	debugMode := logger.Silent
 	if cfg.Database.Debug {
 		debugMode = logger.Info
@@ -28,22 +30,22 @@ func New(cfg *config.Config, l l.Logger) (*DB, error) {
 
 	dialect, err := getDialect(cfg)
 	if err != nil {
-		l.Error(fmt.Sprintf("Failed to create database dialect: %v", err), nil)
+		l.Error(ctx, "Failed to create database dialect", err)
 		return nil, err
 	}
-	l.Info(fmt.Sprintf("Connecting to database %s with driver %s", cfg.Database.Database, cfg.Database.Driver), nil)
+	l.Info(ctx, fmt.Sprintf("Connecting to database %s with driver %s", cfg.Database.Database, cfg.Database.Driver), nil)
 
 	gormDB, err := gormOpen(dialect, &gorm.Config{
 		Logger: logger.Default.LogMode(debugMode),
 	})
 	if err != nil {
-		l.Error(fmt.Sprintf("Failed to connect to database: %v", err), nil)
+		l.Error(ctx, "Failed to connect to database", err)
 		return nil, err
 	}
 
 	sqlDB, err := gormDB.DB()
 	if err != nil {
-		l.Error(fmt.Sprintf("Failed to get SQL DB: %v", err), nil)
+		l.Error(ctx, "Failed to get SQL DB", err)
 
 		return nil, err
 	}
@@ -52,10 +54,10 @@ func New(cfg *config.Config, l l.Logger) (*DB, error) {
 	sqlDB.SetMaxOpenConns(cfg.Database.MaxOpenConns)
 
 	if err = sqlDB.Ping(); err != nil {
-		l.Error(fmt.Sprintf("Failed to ping database: %v", err), nil)
+		l.Error(ctx, "Failed to ping database: %v", err)
 		return nil, err
 	}
-	l.Info(fmt.Sprintf("Successfully connected to database %s with driver %s", cfg.Database.Database, cfg.Database.Driver), nil)
+	l.Info(ctx, fmt.Sprintf("Successfully connected to database %s with driver %s", cfg.Database.Database, cfg.Database.Driver), nil)
 
 	return &DB{
 		GormDB: gormDB,

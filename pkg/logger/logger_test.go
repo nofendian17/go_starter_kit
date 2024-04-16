@@ -1,16 +1,24 @@
 package logger
 
 import (
-	"github.com/gookit/slog"
-	"github.com/gookit/slog/handler"
-	"github.com/gookit/slog/rotatefile"
+	"context"
+	"errors"
+	"github.com/nofendian17/gostarterkit/internal/config"
 	"github.com/stretchr/testify/assert"
+	"log/slog"
 	"testing"
 )
 
 func TestNew(t *testing.T) {
+
+	cfgLoggerJson := config.New()
+	cfgLoggerJson.Logger.Output = "json"
+
+	cfgLoggerText := config.New()
+	cfgLoggerText.Logger.Output = "text"
+
 	type args struct {
-		cfg Config
+		cfg *config.Config
 	}
 	tests := []struct {
 		name string
@@ -20,59 +28,19 @@ func TestNew(t *testing.T) {
 		{
 			name: "new logger json",
 			args: args{
-				cfg: Config{
-					File: File{
-						IsActive: true,
-						LogFile:  "/tmp/app.log",
-						Format:   "json",
-					},
-					Console: Console{
-						Format: "json",
-					},
-				},
+				cfg: cfgLoggerJson,
 			},
 			want: &logger{
-				log: &slog.Logger{
-					ChannelName:    "",
-					FlushInterval:  0,
-					LowerLevelName: false,
-					ReportCaller:   false,
-					CallerSkip:     0,
-					CallerFlag:     0,
-					BackupArgs:     false,
-					TimeClock:      nil,
-					ExitFunc:       nil,
-					PanicFunc:      nil,
-				},
+				logger: &slog.Logger{},
 			},
 		},
 		{
 			name: "new logger text",
 			args: args{
-				cfg: Config{
-					File: File{
-						IsActive: true,
-						LogFile:  "/tmp/app.log",
-						Format:   "text",
-					},
-					Console: Console{
-						Format: "text",
-					},
-				},
+				cfg: cfgLoggerText,
 			},
 			want: &logger{
-				log: &slog.Logger{
-					ChannelName:    "",
-					FlushInterval:  0,
-					LowerLevelName: false,
-					ReportCaller:   false,
-					CallerSkip:     0,
-					CallerFlag:     0,
-					BackupArgs:     false,
-					TimeClock:      nil,
-					ExitFunc:       nil,
-					PanicFunc:      nil,
-				},
+				logger: &slog.Logger{},
 			},
 		},
 	}
@@ -84,53 +52,169 @@ func TestNew(t *testing.T) {
 	}
 }
 
-func Test_logger(t *testing.T) {
-	fileHandler := handler.MustRotateFile("/tmp/app.log", rotatefile.EveryDay, handler.WithLogLevels(slog.AllLevels))
-	fileHandler.SetFormatter(slog.NewJSONFormatter())
-
-	consoleHandler := handler.NewConsoleHandler(slog.AllLevels)
-	consoleHandler.SetFormatter(slog.NewJSONFormatter())
-
-	log := slog.New()
-	log.AddHandlers(fileHandler, consoleHandler)
-	defer log.Close()
-
-	type fields struct {
-		log *slog.Logger
-	}
+func Test_logger_Debug(t *testing.T) {
+	cfg := config.New()
 	type args struct {
-		msg    string
-		fields map[string]interface{}
+		ctx  context.Context
+		msg  string
+		data interface{}
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
+		name string
+
+		args args
 	}{
 		{
-			name: "all levels",
-			fields: fields{
-				log: log,
-			},
+			name: "debug success",
 			args: args{
+				ctx: context.Background(),
 				msg: "hello world",
-				fields: map[string]interface{}{
-					"key": map[string]string{
-						"child1": "value1",
-					},
+				data: map[string]interface{}{
+					"key": "value",
 				},
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			l := &logger{
-				log: tt.fields.log,
-			}
-			l.Info(tt.args.msg, tt.args.fields)
-			l.Warn(tt.args.msg, tt.args.fields)
-			l.Error(tt.args.msg, tt.args.fields)
-			l.Debug(tt.args.msg, tt.args.fields)
+			l := New(cfg)
+			l.Debug(tt.args.ctx, tt.args.msg, tt.args.data)
+		})
+	}
+}
+
+func Test_logger_Error(t *testing.T) {
+	cfg := config.New()
+	type args struct {
+		ctx   context.Context
+		msg   string
+		error error
+	}
+	tests := []struct {
+		name string
+
+		args args
+	}{
+		{
+			name: "error success",
+			args: args{
+				ctx:   context.Background(),
+				msg:   "hello world",
+				error: errors.New("error"),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			l := New(cfg)
+			l.Error(tt.args.ctx, tt.args.msg, tt.args.error)
+		})
+	}
+}
+
+func Test_logger_Info(t *testing.T) {
+	cfg := config.New()
+	type args struct {
+		ctx  context.Context
+		msg  string
+		data interface{}
+	}
+	tests := []struct {
+		name string
+
+		args args
+	}{
+		{
+			name: "info success",
+			args: args{
+				ctx: context.Background(),
+				msg: "hello world",
+				data: map[string]interface{}{
+					"key": "value",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			l := New(cfg)
+			l.Info(tt.args.ctx, tt.args.msg, tt.args.data)
+		})
+	}
+}
+
+func Test_logger_Warn(t *testing.T) {
+	cfg := config.New()
+	type args struct {
+		ctx  context.Context
+		msg  string
+		data interface{}
+	}
+	tests := []struct {
+		name string
+
+		args args
+	}{
+		{
+			name: "warn success",
+			args: args{
+				ctx: context.Background(),
+				msg: "hello world",
+				data: map[string]interface{}{
+					"key": "value",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			l := New(cfg)
+			l.Warn(tt.args.ctx, tt.args.msg, tt.args.data)
+		})
+	}
+}
+
+func Test_parseLevel(t *testing.T) {
+	type args struct {
+		level string
+	}
+	tests := []struct {
+		name string
+		args args
+		want slog.Level
+	}{
+		{
+			name: "debug",
+			args: args{
+				level: "debug",
+			},
+			want: slog.LevelDebug,
+		},
+		{
+			name: "warn",
+			args: args{
+				level: "warn",
+			},
+			want: slog.LevelWarn,
+		},
+		{
+			name: "error",
+			args: args{
+				level: "error",
+			},
+			want: slog.LevelError,
+		},
+		{
+			name: "info",
+			args: args{
+				level: "info",
+			},
+			want: slog.LevelInfo,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equalf(t, tt.want, parseLevel(tt.args.level), "parseLevel(%v)", tt.args.level)
 		})
 	}
 }

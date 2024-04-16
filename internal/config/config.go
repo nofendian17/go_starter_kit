@@ -65,10 +65,6 @@ func load() (*Config, error) {
 	viper.SetDefault("application.address", "localhost")
 	viper.SetDefault("application.port", 3000)
 
-	viper.SetDefault("logger.file.logFile", "logs/app.log")
-	viper.SetDefault("logger.file.format", "json")
-	viper.SetDefault("logger.console.format", "text")
-
 	if err := loadConfigFile(configPath); err != nil {
 		return nil, fmt.Errorf("failed to read config file: %v", err)
 	}

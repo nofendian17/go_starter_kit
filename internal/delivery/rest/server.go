@@ -39,7 +39,7 @@ func (s *server) Start(port int) error {
 	}
 
 	if err := s.httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		s.logger.Error(fmt.Sprintf("Failed to start HTTP server: %v", err), nil)
+		s.logger.Error(context.Background(), "Failed to start HTTP server", err)
 		return err
 	}
 
@@ -54,10 +54,10 @@ func (s *server) Stop(ctx context.Context) error {
 
 	// Attempt to gracefully shut down the HTTP server
 	if err := s.httpServer.Shutdown(ctxShutDown); err != nil {
-		s.logger.Error(fmt.Sprintf("Failed to gracefully shutdown HTTP server: %v", err), nil)
+		s.logger.Error(ctxShutDown, "Failed to gracefully shutdown HTTP server", err)
 		return err
 	}
-	s.logger.Info("HTTP server shutdown completed.", nil)
+	s.logger.Info(ctxShutDown, "HTTP server shutdown completed.", nil)
 	return nil
 }
 

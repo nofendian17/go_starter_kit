@@ -43,14 +43,8 @@ func TestNew(t *testing.T) {
 					Database: 0,
 				},
 				Logger: Logger{
-					File: FileLogger{
-						IsActive: true,
-						LogFile:  "/tmp/app.log",
-						Format:   "json",
-					},
-					Console: ConsoleLogger{
-						Format: "json",
-					},
+					Output: "json",
+					Level:  "debug",
 				},
 			},
 		},

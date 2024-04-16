@@ -12,27 +12,19 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/gookit/slog"
 	"github.com/nofendian17/gostarterkit/internal/container"
 	"github.com/nofendian17/gostarterkit/internal/delivery/rest"
 )
 
 // Run starts the application.
 func Run() error {
+	ctx := context.Background()
+
 	// Initialize config
 	cfg := config.New()
 
 	// Initialize log
-	l := logger.New(logger.Config{
-		File: logger.File{
-			IsActive: cfg.Logger.File.IsActive,
-			LogFile:  cfg.Logger.File.LogFile,
-			Format:   cfg.Logger.File.Format,
-		},
-		Console: logger.Console{
-			Format: cfg.Logger.Console.Format,
-		},
-	})
+	l := logger.New(cfg)
 
 	// Initialize db
 	db, err := database.New(cfg, l)
@@ -69,15 +61,15 @@ func Run() error {
 	// Wait for an error to occur
 	err = <-errCh
 	if err != nil {
-		slog.Errorf("Got error signal: %v", err)
+		l.Error(ctx, "Got error signal", err)
 	}
 
 	// Create a context for graceful shutdown
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctxCancel, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
 	// Stop the REST server
-	if err := restServer.Stop(ctx); err != nil {
+	if err := restServer.Stop(ctxCancel); err != nil {
 		return fmt.Errorf("failed to stop server: %v", err)
 	}
 

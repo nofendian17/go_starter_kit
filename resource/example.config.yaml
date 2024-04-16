@@ -25,9 +25,5 @@ cache:
   password: ""
   database: 0
 logger:
-  file:
-    isActive: true
-    logFile: "log/app.log"
-    format: "json" # json or text
-  console:
-    format: "text" # json or text
+  output: json # text or json
+  level: debug # info or warn or debug or error

@@ -12,16 +12,7 @@ import (
 
 func TestNew(t *testing.T) {
 	cfg := config.New()
-	l := logger.New(logger.Config{
-		File: logger.File{
-			IsActive: false,
-			LogFile:  "/tmp/app.log",
-			Format:   "json",
-		},
-		Console: logger.Console{
-			Format: "text",
-		},
-	})
+	l := logger.New(cfg)
 	oldGormOpen := gormOpen
 	defer func() {
 		gormOpen = oldGormOpen

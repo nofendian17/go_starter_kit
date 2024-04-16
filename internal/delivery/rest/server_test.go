@@ -21,16 +21,7 @@ func TestServer_StartStop(t *testing.T) {
 
 	c := &mockCacheClient.Client{}
 	u := usecase.New(cfg, nil, c)
-	l := logger.New(logger.Config{
-		File: logger.File{
-			IsActive: true,
-			LogFile:  "/tmp/app.log",
-			Format:   "json",
-		},
-		Console: logger.Console{
-			Format: "text",
-		},
-	})
+	l := logger.New(cfg)
 
 	// Create a container with necessary dependencies
 	cntr := &container.Container{
