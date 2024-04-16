@@ -29,17 +29,17 @@ func (l *logger) Info(ctx context.Context, msg string, data interface{}) {
 
 // Warn logs a warning message with optional fields.
 func (l *logger) Warn(ctx context.Context, msg string, data interface{}) {
-	l.logger.InfoContext(ctx, msg, slog.Any("data", data))
+	l.logger.WarnContext(ctx, msg, slog.Any("data", data))
 }
 
 // Error logs an error message with optional fields.
 func (l *logger) Error(ctx context.Context, msg string, err error) {
-	l.logger.InfoContext(ctx, msg, slog.String("error", err.Error()))
+	l.logger.ErrorContext(ctx, msg, slog.String("error", err.Error()))
 }
 
 // Debug logs a debug message with optional fields.
 func (l *logger) Debug(ctx context.Context, msg string, data interface{}) {
-	l.logger.InfoContext(ctx, msg, slog.Any("data", data))
+	l.logger.DebugContext(ctx, msg, slog.Any("data", data))
 }
 
 // New creates a new Logger instance with default settings.
@@ -47,7 +47,7 @@ func New(cfg *config.Config) Logger {
 	var handler slog.Handler
 
 	opt := slog.HandlerOptions{
-		AddSource: true,
+		AddSource: false,
 		Level:     parseLevel(cfg.Logger.Level),
 		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
 			switch a.Key {
