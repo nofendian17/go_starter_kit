@@ -3,34 +3,50 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"github.com/nofendian17/gostarterkit/internal/config"
 	"github.com/nofendian17/gostarterkit/internal/infra/cache"
 	"github.com/nofendian17/gostarterkit/internal/infra/database"
+	"github.com/nofendian17/gostarterkit/pkg/logger"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
 	"github.com/gookit/slog"
-	"github.com/nofendian17/gostarterkit/internal/config"
 	"github.com/nofendian17/gostarterkit/internal/container"
 	"github.com/nofendian17/gostarterkit/internal/delivery/rest"
 )
 
 // Run starts the application.
 func Run() error {
+	// Initialize config
 	cfg := config.New()
 
-	db, err := database.New(cfg)
+	// Initialize log
+	l := logger.New(logger.Config{
+		File: logger.File{
+			IsActive: cfg.Logger.File.IsActive,
+			LogFile:  cfg.Logger.File.LogFile,
+			Format:   cfg.Logger.File.Format,
+		},
+		Console: logger.Console{
+			Format: cfg.Logger.Console.Format,
+		},
+	})
+
+	// Initialize db
+	db, err := database.New(cfg, l)
 	if err != nil {
 		return err
 	}
 
+	// Initialize cache
 	c, err := cache.New(cfg)
 	if err != nil {
 		return err
 	}
 
-	cntr := container.New(cfg, db, c)
+	cntr := container.New(cfg, db, c, l)
 	restServer := rest.New(cntr)
 
 	// Channel to catch errors

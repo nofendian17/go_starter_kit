@@ -10,6 +10,7 @@ type Config struct {
 	Application Application `mapstructure:"application"`
 	Database    Database    `mapstructure:"database"`
 	Cache       Cache       `mapstructure:"cache"`
+	Logger      Logger      `mapstructure:"logger"`
 }
 
 // New ...
@@ -63,6 +64,10 @@ func load() (*Config, error) {
 	viper.SetDefault("application.version", "1.0.0")
 	viper.SetDefault("application.address", "localhost")
 	viper.SetDefault("application.port", 3000)
+
+	viper.SetDefault("logger.file.logFile", "logs/app.log")
+	viper.SetDefault("logger.file.format", "json")
+	viper.SetDefault("logger.console.format", "text")
 
 	if err := loadConfigFile(configPath); err != nil {
 		return nil, fmt.Errorf("failed to read config file: %v", err)

@@ -5,6 +5,7 @@ import (
 	"github.com/nofendian17/gostarterkit/internal/container"
 	mockCacheClient "github.com/nofendian17/gostarterkit/internal/mocks/infra/cache"
 	"github.com/nofendian17/gostarterkit/internal/usecase"
+	"github.com/nofendian17/gostarterkit/pkg/logger"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -15,9 +16,20 @@ func TestNewHandler(t *testing.T) {
 	c := &mockCacheClient.Client{}
 	u := usecase.New(cfg, nil, c)
 
+	l := logger.New(logger.Config{
+		File: logger.File{
+			IsActive: false,
+			LogFile:  "log/app.log",
+			Format:   "json",
+		},
+		Console: logger.Console{
+			Format: "text",
+		},
+	})
 	cntr := &container.Container{
 		Config:  cfg,
 		UseCase: u,
+		Logger:  l,
 	}
 
 	type args struct {
@@ -36,6 +48,7 @@ func TestNewHandler(t *testing.T) {
 			want: &handler{
 				config:  cfg,
 				useCase: u.Health,
+				logger:  l,
 			},
 		},
 	}

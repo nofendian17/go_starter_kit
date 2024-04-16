@@ -3,8 +3,8 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"github.com/gookit/slog"
 	"github.com/nofendian17/gostarterkit/internal/config"
+	l "github.com/nofendian17/gostarterkit/pkg/logger"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
@@ -20,7 +20,7 @@ type DB struct {
 
 var gormOpen = gorm.Open
 
-func New(cfg *config.Config) (*DB, error) {
+func New(cfg *config.Config, l l.Logger) (*DB, error) {
 	debugMode := logger.Silent
 	if cfg.Database.Debug {
 		debugMode = logger.Info
@@ -28,23 +28,22 @@ func New(cfg *config.Config) (*DB, error) {
 
 	dialect, err := getDialect(cfg)
 	if err != nil {
-		slog.Fatalf("Failed to create database dialect: %v", err)
+		l.Error(fmt.Sprintf("Failed to create database dialect: %v", err), nil)
 		return nil, err
 	}
-
-	slog.Infof("Connecting to database %s with driver %s", cfg.Database.Database, cfg.Database.Driver)
+	l.Info(fmt.Sprintf("Connecting to database %s with driver %s", cfg.Database.Database, cfg.Database.Driver), nil)
 
 	gormDB, err := gormOpen(dialect, &gorm.Config{
 		Logger: logger.Default.LogMode(debugMode),
 	})
 	if err != nil {
-		slog.Fatalf("Failed to connect to database: %v", err)
+		l.Error(fmt.Sprintf("Failed to connect to database: %v", err), nil)
 		return nil, err
 	}
 
 	sqlDB, err := gormDB.DB()
 	if err != nil {
-		slog.Fatalf("Failed to get SQL DB: %v", err)
+		l.Error(fmt.Sprintf("Failed to get SQL DB: %v", err), nil)
 
 		return nil, err
 	}
@@ -52,12 +51,11 @@ func New(cfg *config.Config) (*DB, error) {
 	sqlDB.SetMaxIdleConns(cfg.Database.MaxIdleConns)
 	sqlDB.SetMaxOpenConns(cfg.Database.MaxOpenConns)
 
-	if err := sqlDB.Ping(); err != nil {
-		slog.Fatalf("Failed to ping database: %v", err)
+	if err = sqlDB.Ping(); err != nil {
+		l.Error(fmt.Sprintf("Failed to ping database: %v", err), nil)
 		return nil, err
 	}
-
-	slog.Infof("Successfully connected to database %s with driver %s", cfg.Database.Database, cfg.Database.Driver)
+	l.Info(fmt.Sprintf("Successfully connected to database %s with driver %s", cfg.Database.Database, cfg.Database.Driver), nil)
 
 	return &DB{
 		GormDB: gormDB,

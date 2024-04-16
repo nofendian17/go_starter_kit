@@ -6,6 +6,7 @@ import (
 	"github.com/nofendian17/gostarterkit/internal/config"
 	mockCacheClient "github.com/nofendian17/gostarterkit/internal/mocks/infra/cache"
 	"github.com/nofendian17/gostarterkit/internal/usecase"
+	"github.com/nofendian17/gostarterkit/pkg/logger"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -20,11 +21,13 @@ func TestServer_StartStop(t *testing.T) {
 
 	c := &mockCacheClient.Client{}
 	u := usecase.New(cfg, nil, c)
+	l := logger.New(logger.Config{})
 
 	// Create a container with necessary dependencies
 	cntr := &container.Container{
 		Config:  cfg,
 		UseCase: u,
+		Logger:  l,
 	}
 
 	// Create a new HTTP server instance

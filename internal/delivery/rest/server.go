@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/gookit/slog"
 	"github.com/nofendian17/gostarterkit/internal/container"
 	"github.com/nofendian17/gostarterkit/internal/delivery/rest/handler"
 	"github.com/nofendian17/gostarterkit/internal/delivery/rest/middleware"
+	"github.com/nofendian17/gostarterkit/pkg/logger"
 	"net/http"
 	"time"
 )
@@ -23,6 +23,7 @@ type server struct {
 	router     *http.ServeMux
 	handler    *handler.Handler
 	httpServer *http.Server
+	logger     logger.Logger
 }
 
 // Start starts the HTTP server.
@@ -38,7 +39,7 @@ func (s *server) Start(port int) error {
 	}
 
 	if err := s.httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		slog.Errorf("Failed to start HTTP server: %v", err)
+		s.logger.Error(fmt.Sprintf("Failed to start HTTP server: %v", err), nil)
 		return err
 	}
 
@@ -53,11 +54,10 @@ func (s *server) Stop(ctx context.Context) error {
 
 	// Attempt to gracefully shut down the HTTP server
 	if err := s.httpServer.Shutdown(ctxShutDown); err != nil {
-		slog.Errorf("Failed to gracefully shutdown HTTP server: %v", err)
+		s.logger.Error(fmt.Sprintf("Failed to gracefully shutdown HTTP server: %v", err), nil)
 		return err
 	}
-
-	slog.Printf("HTTP server shutdown completed.")
+	s.logger.Info("HTTP server shutdown completed.", nil)
 	return nil
 }
 
@@ -66,6 +66,7 @@ func New(c *container.Container) ServerInterface {
 	srv := &server{
 		router:  http.NewServeMux(),
 		handler: handler.New(c),
+		logger:  c.Logger,
 	}
 	srv.routes()
 	return srv
