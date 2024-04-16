@@ -7,7 +7,6 @@ require (
 	github.com/go-playground/validator/v10 v10.19.0
 	github.com/go-redis/redismock/v9 v9.2.0
 	github.com/google/uuid v1.6.0
-	github.com/gookit/slog v0.5.5
 	github.com/redis/go-redis/v9 v9.5.1
 	github.com/rs/cors v1.10.1
 	github.com/shirou/gopsutil/v3 v3.24.3
