@@ -3,22 +3,14 @@ package logger
 import (
 	"context"
 	"errors"
-	"github.com/nofendian17/gostarterkit/internal/config"
 	"github.com/stretchr/testify/assert"
 	"log/slog"
 	"testing"
 )
 
 func TestNew(t *testing.T) {
-
-	cfgLoggerJson := config.New()
-	cfgLoggerJson.Logger.Output = "json"
-
-	cfgLoggerText := config.New()
-	cfgLoggerText.Logger.Output = "text"
-
 	type args struct {
-		cfg *config.Config
+		cfg Config
 	}
 	tests := []struct {
 		name string
@@ -28,7 +20,12 @@ func TestNew(t *testing.T) {
 		{
 			name: "new logger json",
 			args: args{
-				cfg: cfgLoggerJson,
+				cfg: Config{
+					Output:  "json",
+					Level:   "debug",
+					Service: "svc",
+					Version: "1.0.0",
+				},
 			},
 			want: &logger{
 				logger: &slog.Logger{},
@@ -37,7 +34,12 @@ func TestNew(t *testing.T) {
 		{
 			name: "new logger text",
 			args: args{
-				cfg: cfgLoggerText,
+				cfg: Config{
+					Output:  "text",
+					Level:   "debug",
+					Service: "svc",
+					Version: "1.0.0",
+				},
 			},
 			want: &logger{
 				logger: &slog.Logger{},
@@ -53,7 +55,6 @@ func TestNew(t *testing.T) {
 }
 
 func Test_logger_Debug(t *testing.T) {
-	cfg := config.New()
 	type args struct {
 		ctx  context.Context
 		msg  string
@@ -77,14 +78,18 @@ func Test_logger_Debug(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			l := New(cfg)
+			l := New(Config{
+				Output:  "json",
+				Level:   "debug",
+				Service: "svc",
+				Version: "1.0.0",
+			})
 			l.Debug(tt.args.ctx, tt.args.msg, tt.args.data)
 		})
 	}
 }
 
 func Test_logger_Error(t *testing.T) {
-	cfg := config.New()
 	type args struct {
 		ctx   context.Context
 		msg   string
@@ -106,14 +111,18 @@ func Test_logger_Error(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			l := New(cfg)
+			l := New(Config{
+				Output:  "json",
+				Level:   "debug",
+				Service: "svc",
+				Version: "1.0.0",
+			})
 			l.Error(tt.args.ctx, tt.args.msg, tt.args.error)
 		})
 	}
 }
 
 func Test_logger_Info(t *testing.T) {
-	cfg := config.New()
 	type args struct {
 		ctx  context.Context
 		msg  string
@@ -137,14 +146,18 @@ func Test_logger_Info(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			l := New(cfg)
+			l := New(Config{
+				Output:  "json",
+				Level:   "debug",
+				Service: "svc",
+				Version: "1.0.0",
+			})
 			l.Info(tt.args.ctx, tt.args.msg, tt.args.data)
 		})
 	}
 }
 
 func Test_logger_Warn(t *testing.T) {
-	cfg := config.New()
 	type args struct {
 		ctx  context.Context
 		msg  string
@@ -168,7 +181,12 @@ func Test_logger_Warn(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			l := New(cfg)
+			l := New(Config{
+				Output:  "json",
+				Level:   "debug",
+				Service: "svc",
+				Version: "1.0.0",
+			})
 			l.Warn(tt.args.ctx, tt.args.msg, tt.args.data)
 		})
 	}

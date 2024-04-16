@@ -24,7 +24,12 @@ func Run() error {
 	cfg := config.New()
 
 	// Initialize log
-	l := logger.New(cfg)
+	l := logger.New(logger.Config{
+		Output:  cfg.Logger.Output,
+		Level:   cfg.Logger.Level,
+		Service: cfg.Application.Name,
+		Version: cfg.Application.Version,
+	})
 
 	// Initialize db
 	db, err := database.New(cfg, l)

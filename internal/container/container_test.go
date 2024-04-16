@@ -13,7 +13,12 @@ import (
 
 func TestNew(t *testing.T) {
 	cfg := config.New()
-	l := logger.New(cfg)
+	l := logger.New(logger.Config{
+		Output:  cfg.Logger.Output,
+		Level:   cfg.Logger.Level,
+		Service: cfg.Application.Name,
+		Version: cfg.Application.Version,
+	})
 	type args struct {
 		cfg *config.Config
 		db  *database.DB

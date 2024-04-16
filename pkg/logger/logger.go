@@ -2,12 +2,18 @@ package logger
 
 import (
 	"context"
-	"github.com/nofendian17/gostarterkit/internal/config"
 	"log/slog"
 	"os"
 	"strings"
 	"time"
 )
+
+type Config struct {
+	Output  string
+	Level   string
+	Service string
+	Version string
+}
 
 // Logger defines the interface for logging operations.
 type Logger interface {
@@ -43,12 +49,12 @@ func (l *logger) Debug(ctx context.Context, msg string, data interface{}) {
 }
 
 // New creates a new Logger instance with default settings.
-func New(cfg *config.Config) Logger {
+func New(cfg Config) Logger {
 	var handler slog.Handler
 
 	opt := slog.HandlerOptions{
 		AddSource: false,
-		Level:     parseLevel(cfg.Logger.Level),
+		Level:     parseLevel(cfg.Level),
 		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
 			switch a.Key {
 			case slog.TimeKey:
@@ -58,7 +64,7 @@ func New(cfg *config.Config) Logger {
 		},
 	}
 
-	switch strings.ToLower(cfg.Logger.Output) {
+	switch strings.ToLower(cfg.Output) {
 	case "json":
 		handler = slog.NewJSONHandler(os.Stdout, &opt)
 	default:
@@ -66,8 +72,8 @@ func New(cfg *config.Config) Logger {
 	}
 
 	l := slog.New(handler).
-		With(slog.String("service", cfg.Application.Name)).
-		With(slog.String("version", cfg.Application.Version))
+		With(slog.String("service", cfg.Service)).
+		With(slog.String("version", cfg.Version))
 
 	return &logger{
 		logger: l,

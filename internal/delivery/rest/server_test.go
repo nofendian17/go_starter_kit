@@ -18,10 +18,15 @@ import (
 
 func TestServer_StartStop(t *testing.T) {
 	cfg := config.New()
+	l := logger.New(logger.Config{
+		Output:  cfg.Logger.Output,
+		Level:   cfg.Logger.Level,
+		Service: cfg.Application.Name,
+		Version: cfg.Application.Version,
+	})
 
 	c := &mockCacheClient.Client{}
 	u := usecase.New(cfg, nil, c)
-	l := logger.New(cfg)
 
 	// Create a container with necessary dependencies
 	cntr := &container.Container{

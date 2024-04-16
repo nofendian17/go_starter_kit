@@ -12,11 +12,16 @@ import (
 
 func TestNewHandler(t *testing.T) {
 	cfg := config.New()
+	l := logger.New(logger.Config{
+		Output:  cfg.Logger.Output,
+		Level:   cfg.Logger.Level,
+		Service: cfg.Application.Name,
+		Version: cfg.Application.Version,
+	})
 
 	c := &mockCacheClient.Client{}
 	u := usecase.New(cfg, nil, c)
 
-	l := logger.New(cfg)
 	cntr := &container.Container{
 		Config:  cfg,
 		UseCase: u,
