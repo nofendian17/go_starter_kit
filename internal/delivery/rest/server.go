@@ -31,6 +31,7 @@ func (s *server) Start(port int) error {
 	stack := middleware.Stack(
 		middleware.Cors,
 		middleware.RequestID,
+		middleware.Logging,
 	)
 
 	s.httpServer = &http.Server{

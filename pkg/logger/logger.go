@@ -30,22 +30,22 @@ type logger struct {
 
 // Info logs an informational message with optional fields.
 func (l *logger) Info(ctx context.Context, msg string, data interface{}) {
-	l.logger.InfoContext(ctx, msg, slog.Any("data", data))
+	l.logger.With(slog.String("type", "sys")).InfoContext(ctx, msg, slog.Any("data", data))
 }
 
 // Warn logs a warning message with optional fields.
 func (l *logger) Warn(ctx context.Context, msg string, data interface{}) {
-	l.logger.WarnContext(ctx, msg, slog.Any("data", data))
+	l.logger.With(slog.String("type", "sys")).WarnContext(ctx, msg, slog.Any("data", data))
 }
 
 // Error logs an error message with optional fields.
 func (l *logger) Error(ctx context.Context, msg string, err error) {
-	l.logger.ErrorContext(ctx, msg, slog.String("error", err.Error()))
+	l.logger.With(slog.String("type", "sys")).ErrorContext(ctx, msg, slog.String("error", err.Error()))
 }
 
 // Debug logs a debug message with optional fields.
 func (l *logger) Debug(ctx context.Context, msg string, data interface{}) {
-	l.logger.DebugContext(ctx, msg, slog.Any("data", data))
+	l.logger.With(slog.String("type", "sys")).DebugContext(ctx, msg, slog.Any("data", data))
 }
 
 // New creates a new Logger instance with default settings.
@@ -74,6 +74,7 @@ func New(cfg Config) Logger {
 	l := slog.New(handler).
 		With(slog.String("service", cfg.Service)).
 		With(slog.String("version", cfg.Version))
+	slog.SetDefault(l)
 
 	return &logger{
 		logger: l,
