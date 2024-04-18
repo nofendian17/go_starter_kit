@@ -29,7 +29,7 @@ func Logging(next http.Handler) http.Handler {
 		next.ServeHTTP(captureWriter, r)
 
 		// Calculate elapsed time
-		elapsed := time.Since(start).Milliseconds()
+		elapsed := time.Since(start)
 
 		slog.With(slog.String("type", "tdr")).
 			// With("request_id", r.Context().Value(DefaultRequestIDKey)).
@@ -42,7 +42,7 @@ func Logging(next http.Handler) http.Handler {
 			)).With(slog.Group("response",
 			slog.Int("code", captureWriter.Status()),
 			slog.String("body", responseBodyBuffer.String()),
-			slog.String("elapsed", fmt.Sprintf("%dms", elapsed)),
+			slog.String("elapsed", fmt.Sprintf("%v", elapsed)),
 		)).Info("request complete")
 	})
 }
