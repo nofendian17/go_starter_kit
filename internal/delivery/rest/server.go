@@ -12,8 +12,8 @@ import (
 	"time"
 )
 
-// ServerInterface defines the methods for an HTTP server.
-type ServerInterface interface {
+// Server defines the methods for an HTTP server.
+type Server interface {
 	Start(port int) error
 	Stop(ctx context.Context) error
 }
@@ -63,7 +63,7 @@ func (s *server) Stop(ctx context.Context) error {
 }
 
 // New creates a new instance of the HTTP server.
-func New(c *container.Container) ServerInterface {
+func New(c *container.Container) Server {
 	srv := &server{
 		router:  http.NewServeMux(),
 		handler: handler.New(c),
